@@ -1,49 +1,80 @@
-# raindata
+# 🌧️ RainData - Historical Precipitation Data Explorer
 
-## 1. How to Set Up a Python Virtual Environment and Install Requirements to use METApy locally
+Web application for accessing and downloading historical precipitation data in Brazil.
 
-#### 1.1 Create the virtual environment (depends on your installation)
-```bash
-python3 -m venv myenv
-# or
-python -m venv myenv
-# or
-python3.10 -m venv myenv
+## 🚀 Key Features
+
+- **🗺️ Interactive Map:**
+  - Geospatial visualization of monitoring stations across Brazil.
+  - Intuitive navigation: click on a map point to view station details.
+  - Zoom and pan controls (Plotly).
+
+- **📊 Detailed Dashboard:**
+  - **Dynamic Filters:** Filter by year, month, date range, and operational status.
+  - **Interactive Charts:** Time-series precipitation analysis.
+  - **Metadata Display:** Station code, coordinates, and status.
+
+- **⚡ High Performance:**
+  - Uses **Parquet** format for ultra-fast data loading.
+  - Optimized data pipeline (CSV to Parquet conversion).
+
+- **📥 Export:** Download filtered data in CSV format.
+
+## 📡 Data Source
+
+The meteorological data used in this project is extracted from **BDMEP** (Banco de Dados Meteorológicos para Ensino e Pesquisa), provided by **INMET** (National Institute of Meteorology - Brazil).
+
+## 🛠️ Tech Stack
+
+- **Language:** Python 3.12
+- **Framework:** [Streamlit](https://streamlit.io/)
+- **Data Processing:** Pandas, PyArrow
+- **Visualization:** Plotly Express
+
+## 📂 Project Structure
+
+```text
+raindata/
+├── app.py                # Application entry point (Navigation)
+├── convert.ipynb         # ETL Notebook (Metadata extraction & Parquet conversion)
+├── pages/
+│   ├── home.py           # Home Page (Map)
+│   └── raindata.py       # Analysis Page (Charts & Filters)
+├── rain_datasets/        # Raw input CSV files
+├── metadata_estacoes.parquet # Generated metadata file
+└── requirements.txt      # Project dependencies
 ```
 
-#### 1.2 Activate the virtual environment  
-```bash
-source myenv/bin/activate # On Linux or macOS
-myenv\Scripts\activate    # On Windows
-```
+## ⚙️ Installation & Usage
 
-#### 1.3 Install required packages
-```bash
-pip install -r requirements.txt
-```
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/raindata.git
+   cd raindata
+   ```
 
-#### 1.4 To deactivate the virtual environment
-```bash
-deactivate
-```
+2. **Create a virtual environment:**
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate  # Linux/Mac
+   # or
+   .venv\Scripts\activate     # Windows
+   ```
 
-## 2. Use pip-chill to manage your `requirements.txt` file  
-  
-#### 2.1 To install any packages or packages which are outside of `requirements.txt`
-```bash
-pip install your_package
-```
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-#### 2.2 After installation, update the `requirements.txt` file
-```bash
-pip-chill > requirements.txt
-```
+4. **Prepare Data (ETL):**
+   - Place your raw `.csv` files from BDMEP in the `rain_datasets` folder.
+   - Run the `convert.ipynb` notebook to generate `metadata_estacoes.parquet` and convert data to Parquet.
 
-# Notes
+5. **Run the App:**
+   ```bash
+   streamlit run app.py
+   ```
 
-- [Important dataset](https://carbuai.pythonanywhere.com/about_us)  
-- Dataset: `renata\rccarbonation.xlsx`
+## 🎨 Theme
 
-# Main papers
-- [paper dataset](https://drive.google.com/open?id=1yzvW4NIV35N7V_6y5RW59U3tiGp_AwL6&usp=drive_fs)
-- 
+The application uses a custom dark theme with blue accents for better data visualization. Configuration is located in `.streamlit/config.toml`.
