@@ -9,9 +9,9 @@ lang = st.session_state.get("lang")
 
 @st.cache_data
 def load_metadata():
-    if os.path.exists("metadata_estacoes.parquet"):
+    if os.path.exists("./data/metadata_estacoes.parquet"):
         try:
-            return pd.read_parquet("metadata_estacoes.parquet")
+            return pd.read_parquet("./data/metadata_estacoes.parquet")
         except Exception:
             return None
     return None

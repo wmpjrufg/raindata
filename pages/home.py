@@ -11,9 +11,9 @@ st.title(get_text('home_title', lang))
 
 @st.cache_data
 def load_data():
-    if os.path.exists("metadata_estacoes.parquet"):
+    if os.path.exists("./data/metadata_estacoes.parquet"):
         try:
-            df = pd.read_parquet("metadata_estacoes.parquet")
+            df = pd.read_parquet("./data/metadata_estacoes.parquet")
 
             for col in ['Latitude', 'Longitude']:
                 if col in df.columns:
