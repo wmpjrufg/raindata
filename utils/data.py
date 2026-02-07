@@ -2,6 +2,8 @@ import os
 import glob
 from datetime import datetime
 
+import numpy as np
+import scipy as sc
 import pandas as pd
 import streamlit as st
 
@@ -123,3 +125,63 @@ def clean_dataset(path_file: str) -> tuple[dict, pd.DataFrame, pd.DataFrame, pd.
     final_df.reset_index(drop=True, inplace=True)
 
     return cabecalho, final_df
+
+def compute_max_daily_preciptation(dataset: pd.DataFrame) -> pd.DataFrame:
+    """Function to compute the max daily preciptation in civil or hydrological year máxima diária em função do ano hidrológico ou civil.
+
+    :param dataset: Clean BDMEP dataset
+
+    :return: pd.DataFrame with the biggest daily precipitaion by hydrological or civil year
+    """
+
+    # Format column type
+    dataset['precipitacao total diaria (mm)'] = pd.to_numeric(dataset['precipitacao total diaria (mm)'], errors='coerce')
+
+    # Extract mean and standard deviation from the top anual values
+    top_precipitation_by_year = dataset.groupby('ano hidrologico')['precipitacao total diaria (mm)'].max().reset_index()
+    top_precipitation_by_year.rename(columns={'precipitacao total diaria (mm)': 'precipitacao máxima anual (mm)'}, inplace=True)
+
+    # Remove zero's (0)
+    top_precipitation_by_year = top_precipitation_by_year[
+        top_precipitation_by_year['precipitacao máxima anual (mm)'] > 0]
+    top_precipitation_by_year.reset_index(drop=True, inplace=True)
+
+    return top_precipitation_by_year
+
+def compute_gev(dataset: pd.DataFrame) -> tuple[float, float, float, list]:
+    """Check the GEV parameters for the top anual precipitation
+
+    :param dataset: pd.DataFrame with the biggest daily precipitaion by hydrological or civil year
+
+    :return: [0] = Form parameter (c), [1] = Localization parameter (loc), [2] = Scale parameter (scale), [3] = GEV data for plot
+    """
+
+    x = pd.to_numeric(dataset['precipitacao máxima anual (mm)'], errors="coerce").dropna(
+    ).to_numpy(dtype=float)
+    x = x[x > 0.0]
+    c, loc, scale = sc.stats.genextreme.fit(x)
+    dist = sc.stats.genextreme(c, loc=loc, scale=scale)
+    gev = dist.rvs(size=100)
+    gev = np.maximum(gev, 0.0)
+
+    return float(c), float(loc), float(scale), gev
+
+
+def compute_hmax_gev(c: float, loc: float, scale: float) -> pd.DataFrame:
+    """Compute daily max preciptation using based in return window using GEV destribuition.
+
+    :param c: Parameter of the form of GEV distribuition 
+    :param loc: Localization parameter of GEV distribuition
+    :param scale: Scale parameters from GEV distribuition
+
+    :return: Max daily precipition (mm) based in return period (anos)
+    """
+
+    Tr_list = [2, 5, 10, 15, 20, 25, 50, 100, 250, 500, 1000]
+    p = 1 - 1/np.array(Tr_list, dtype=float)
+    x_Tr = sc.stats.genextreme.ppf(p, c, loc=loc, scale=scale)
+    p_exec = 1/np.array(Tr_list, dtype=float)
+    df_hmax1 = pd.DataFrame(
+        {"t_r (anos)": Tr_list, "1/Tr": p_exec, "h_max,1 (mm)": x_Tr})
+
+    return df_hmax1
