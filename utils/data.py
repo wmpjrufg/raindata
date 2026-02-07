@@ -37,7 +37,7 @@ def is_continuous(months: list) -> tuple[bool, list]:
 
     return False, []
 
-def get_montuly_mean_precipitation(dataset_metadata: pd.DataFrame) -> pd.DataFrame:
+def get_monthly_mean_precipitation(dataset_metadata: pd.DataFrame) -> pd.DataFrame:
     """
     Function to calculate the mensal mean precipitation
     
@@ -55,16 +55,16 @@ def get_dry_season(monthly_dataset: pd.DataFrame) -> pd.DataFrame:
 
     return monthly_dataset.sort_values(by='precipitacao media mensal (mm)').head(6)
 
-def get_hydrological_year_init(dataset: pd.DataFrame):
+def get_hydrological_year_init(dataset: pd.DataFrame) -> tuple[str, int]:
         
     # Verify if the dry season is continuous
     year_tupe, months_window = is_continuous(dataset['mês'].tolist())
     
     if year_tupe:
-        metodologia = "Ano hidrológico"
+        method = "Ano hidrológico"
         hydrological_year_init = months_window[-1] % 12 + 1
     else:
-        metodologia = "Ano civil"
+        method = "Ano civil"
         hydrological_year_init = 1
 
-    return metodologia, hydrological_year_init
+    return method, hydrological_year_init
