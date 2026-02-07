@@ -74,7 +74,7 @@ if df is not None and not df.empty:
 
         if code:
             st.session_state['selected_station_code'] = code
-            st.switch_page("pages/raindata.py")
+            st.switch_page("pages/explorer_page.py")
 
 else:
     st.info(get_text('home_no_data', lang))

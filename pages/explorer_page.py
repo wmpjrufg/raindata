@@ -7,6 +7,7 @@ from utils.i18n import get_text
 
 lang = st.session_state.get("lang")
 
+
 @st.cache_data
 def load_metadata():
     if os.path.exists("./data/metadata_estacoes.parquet"):
@@ -16,12 +17,13 @@ def load_metadata():
             return None
     return None
 
+
 @st.cache_data
 def load_station_data(file_path):
     return pd.read_parquet(file_path)
 
 
-st.title(get_text('rain_title', lang))
+st.title(get_text('dataset_explorer', lang))
 
 df_meta = load_metadata()
 
