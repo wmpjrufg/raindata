@@ -68,6 +68,10 @@ else:
         )
 
         if st.button(get_text('go_to_hydrologic_page', lang)):
+            selected_meta = df_filtered[df_filtered['display_label'] == station_option].iloc[0]
+            code_to_pass = selected_meta[col_codigo]
+            st.session_state['selected_station_code'] = code_to_pass
+            
             st.switch_page("pages/hydrologic_year_page.py")
             
         station_meta = df_filtered[df_filtered['display_label']
