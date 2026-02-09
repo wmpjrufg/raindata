@@ -1,7 +1,8 @@
+import glob
 import streamlit as st
 
 from src.utils.i18n import get_text
-from src.functions.data import load_metadata
+from src.functions.data import clean_dataset, get_monthly_mean_precipitation, load_metadata, load_station_data
 
 
 lang = st.session_state.get("lang")
@@ -66,3 +67,40 @@ else:
         station_meta = df_filtered[df_filtered['display_label']
                                    == station_option].iloc[0]
         station_id = station_meta['id_arquivo']
+
+        patterns = [
+            f"rain_datasets/dados_{station_id}_*.parquet",
+            f"data/dados_{station_id}_*.parquet"
+        ]
+
+        parquet_file = None
+        for p in patterns:
+            files = glob.glob(p)
+            if files:
+                parquet_file = files[0]
+                break
+        
+        if parquet_file:
+            try:
+                raw_data = load_station_data(parquet_file)
+                
+                metadata, dataset = clean_dataset(raw_data)
+            
+                if not dataset.empty:
+                    st.success(f"Dados carregados para estação: {station_meta.get('Nome', station_id)}")
+
+                    monthly_dataset = get_monthly_mean_precipitation(dataset)
+                    
+                    st.subheader("Médias Mensais")
+                    st.dataframe(monthly_dataset, use_container_width=True)
+                    
+                    # Aqui você pode chamar as funções de cálculo hidrológico
+                    # Ex: compute_max_daily_preciptation(dataset)
+                    
+                else:
+                    st.warning("O arquivo foi encontrado, mas não contém dados válidos após a limpeza.")
+
+            except Exception as e:
+                st.error(f"Erro ao processar o arquivo da estação: {e}")
+        else:
+            st.error(f"Arquivo de dados não encontrado para a estação ID: {station_id}")
