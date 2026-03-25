@@ -1,5 +1,6 @@
 import os
 import shutil
+import re
 from datetime import datetime
 
 import pandas as pd
@@ -8,9 +9,9 @@ import streamlit as st
 
 @st.cache_data
 def load_metadata():
-    if os.path.exists("./data/metadata_estacoes.parquet"):
+    if os.path.exists("./data/rain/metadata_estacoes.parquet"):
         try:
-            return pd.read_parquet("./data/metadata_estacoes.parquet")
+            return pd.read_parquet("./data/rain/metadata_estacoes.parquet")
         except Exception:
             return None
     return None
@@ -198,3 +199,51 @@ def clean_dataset(input_data: str | pd.DataFrame) -> tuple[dict, pd.DataFrame, p
         final_df = pd.DataFrame(columns=df.columns)
 
     return cabecalho, final_df, spi_df
+
+
+BRAZIL_UF_COORDS = {
+    'AC': {'lat': -9.0238, 'lon': -70.8120}, 'AL': {'lat': -9.5713, 'lon': -36.7820},
+    'AM': {'lat': -3.4168, 'lon': -65.8561}, 'AP': {'lat': 1.4111, 'lon': -51.7725},
+    'BA': {'lat': -12.5797, 'lon': -41.7007}, 'CE': {'lat': -5.4984, 'lon': -39.3206},
+    'DF': {'lat': -15.7998, 'lon': -47.8645}, 'ES': {'lat': -19.1834, 'lon': -40.3089},
+    'GO': {'lat': -15.8270, 'lon': -49.8362}, 'MA': {'lat': -4.9609, 'lon': -45.2744},
+    'MG': {'lat': -18.5122, 'lon': -44.5550}, 'MS': {'lat': -20.3222, 'lon': -54.7383},
+    'MT': {'lat': -12.6819, 'lon': -56.0950}, 'PA': {'lat': -1.9981, 'lon': -54.9306},
+    'PB': {'lat': -7.1153, 'lon': -36.8253}, 'PE': {'lat': -8.8137, 'lon': -36.9541},
+    'PI': {'lat': -7.7183, 'lon': -42.7289}, 'PR': {'lat': -25.2521, 'lon': -52.0215},
+    'RJ': {'lat': -22.9094, 'lon': -43.2094}, 'RN': {'lat': -5.4026, 'lon': -36.9541},
+    'RO': {'lat': -11.5057, 'lon': -63.5806}, 'RR': {'lat': 2.7376, 'lon': -62.0751},
+    'RS': {'lat': -30.0346, 'lon': -51.2177}, 'SC': {'lat': -27.2423, 'lon': -50.2189},
+    'SE': {'lat': -10.5741, 'lon': -37.3826}, 'SP': {'lat': -23.5505, 'lon': -46.6333},
+    'TO': {'lat': -10.1753, 'lon': -48.2982}
+}
+
+
+def clean_commodity_data(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Cleans commodity column names by extracting the state (UF) abbreviation and standardizes the date column.
+    """
+    df_cleaned = df.copy()
+
+    # Standardize date column names involving 'Ano' or 'Mes'
+    date_col_idx = [i for i, col in enumerate(df_cleaned.columns) if 'ano' in str(
+        col).lower() or 'mes' in str(col).lower()]
+
+    if date_col_idx:
+        original_date_name = df_cleaned.columns[date_col_idx[0]]
+        df_cleaned.rename(
+            columns={original_date_name: 'data medicao'}, inplace=True)
+
+    new_names = {}
+    for col in df_cleaned.columns:
+        if col != 'data medicao':
+            # Extract the UF pattern (e.g., matching '.../BA,...' or '.../MG/...')
+            match = re.search(r'/([A-Z]{2})(?:,|/|$)', str(col))
+            if match:
+                uf = match.group(1)
+                new_names[col] = uf
+            else:
+                new_names[col] = col
+
+    df_cleaned.rename(columns=new_names, inplace=True)
+    return df_cleaned
