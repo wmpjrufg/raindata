@@ -26,7 +26,7 @@ data_analysis_title = (
 
 home_page = st.Page("pages/home.py", title=home_title, icon="🏠", default=True)
 dataset_explorer_page = st.Page(
-    "pages/explorer_page.py", title=dataset_explorer_title, icon="🌧️")
+    "pages/explorer_page.py", title=dataset_explorer_title, icon="🌾")
 data_analysis_page = st.Page(
     "pages/data_analysis_page.py", title=data_analysis_title, icon="📊")
 

@@ -60,6 +60,23 @@ translations = {
         "computing_data": "Calculando dados hidrológicos...",
         "idf_download_dataset": "📥 Baixar dados IDF (.csv)",
         "spi_download_dataset": "📥 Baixar dados SPI-1 (.csv)",
+
+        'commodity_analysis': '🌾 Análise de Commodities vs SPI',
+        'select_state': 'Selecione o Estado (UF):',
+        'select_commodities': 'Selecione as Commodities para comparar:',
+        'spi_vs_price_chart': 'SPI-1 Médio vs Preço da Commodity ({uf})',
+        'price_axis': 'Preço Histórico',
+        'no_commodity_data': 'Sem dados de commodity para este estado/seleção.',
+
+        'commodity_explorer': '🌾 Explorador de Dados de Preço de Commodities',
+        'select_commodity_file': 'Selecione a Commodity:',
+        'select_uf_col': 'Selecione o Estado (UF):',
+        'commodity_time_series': 'Série Temporal - Preço em {uf}',
+        'download_commodity_csv': '📥 Baixar dados desta Commodity (.csv)',
+
+        'normalization_info': '* **Nota:** Os valores de SPI e preço das commodities foram normalizados (escala de 0 a 1) para facilitar a comparação visual no mesmo gráfico.',
+        'date_label': 'Data',
+        'price_label_brl': 'Preço (R$)',
     },
     'en': {
         'app_title': '🌧️ Precipitation Data Explorer',
@@ -122,6 +139,23 @@ translations = {
         "computing_data": "Computing hydrological data...",
         "idf_download_dataset": "📥 Download IDF data (.csv)",
         "spi_download_dataset": "📥 Download SPI-1 data (.csv)",
+
+        'commodity_analysis': '🌾 Commodity vs SPI Analysis',
+        'select_state': 'Select State (UF):',
+        'select_commodities': 'Select Commodities to compare:',
+        'spi_vs_price_chart': 'Average SPI-1 vs Commodity Price ({uf})',
+        'price_axis': 'Historical Price',
+        'no_commodity_data': 'No commodity data for this state/selection.',
+
+        'commodity_explorer': '🌾 Commodity Price Data Explorer',
+        'select_commodity_file': 'Select Commodity:',
+        'select_uf_col': 'Select State (UF):',
+        'commodity_time_series': 'Time Series - Price in {uf}',
+        'download_commodity_csv': '📥 Download Commodity data (.csv)',
+
+        'normalization_info': '* **Note:** SPI and commodity price values were normalized (0 to 1 scale) to facilitate visual comparison in the same chart.',
+        'date_label': 'Date',
+        'price_label_brl': 'Price (BRL)',
     }
 }
 
