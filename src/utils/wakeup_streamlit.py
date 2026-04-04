@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import TimeoutException
 
-STREAMLIT_URL = "https://raindata.streamlit.app/"
+STREAMLIT_URL = "https://raindata-commodities.streamlit.app/"
 
 def main():
     options = Options()
