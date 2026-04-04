@@ -303,3 +303,64 @@ def plot_spi(output_folder: str, name: str, dataset: pd.DataFrame, lang: str = '
                     dpi=600, bbox_inches='tight')
 
     return fig
+
+
+def plot_spi_vs_commodities(output_folder: str, name: str, lang: str, spi_df: pd.DataFrame, comm_dataframes: dict, selected_uf: str):
+    labels = {
+        'pt': {
+            'xlabel': 'Data',
+            'ylabel1': 'SPI-1 (Normalizado)',
+            'ylabel2': 'Preço Histórico (Normalizado)',
+            'filename': f'{name}_spi_commodities_pt.png'
+        },
+        'en': {
+            'xlabel': 'Date',
+            'ylabel1': 'SPI-1 (Normalized)',
+            'ylabel2': 'Historical Price (Normalized)',
+            'filename': f'{name}_spi_commodities_en.png'
+        }
+    }
+
+    cfg = _PLOT_CONFIG
+    width_in = 22 * cfg['inches_per_cm']
+    height_in = 10 * cfg['inches_per_cm']
+
+    fig, ax1 = plt.subplots(figsize=(width_in, height_in))
+
+    # Eixo 1: SPI
+    ax1.plot(spi_df['data medicao'], spi_df['SPI_1_norm'], color='#003366',
+             linewidth=2, linestyle='--', label='SPI-1 (Estação)')
+
+    ax1.set_xlabel(labels[lang]['xlabel'], fontsize=cfg['label_size'])
+    ax1.set_ylabel(labels[lang]['ylabel1'],
+                   fontsize=cfg['label_size'], color='#003366')
+    ax1.tick_params(axis='y', labelcolor='#003366', labelsize=cfg['axis_size'])
+    ax1.tick_params(axis='both', which='major', labelsize=cfg['axis_size'])
+    ax1.grid(True, linestyle="--", alpha=cfg['alpha'])
+
+    # Eixo 2: Commodities
+    ax2 = ax1.twinx()
+    ax2.set_ylabel(labels[lang]['ylabel2'],
+                   fontsize=cfg['label_size'], color='black')
+
+    cores = ['#d62728', '#2ca02c', '#ff7f0e', '#9467bd', '#e377c2', '#8c564b']
+    for idx, (comm_name, df_comm) in enumerate(comm_dataframes.items()):
+        cor = cores[idx % len(cores)]
+        ax2.plot(df_comm['data medicao'], df_comm[f'{comm_name}_norm'],
+                 color=cor, linewidth=2, label=f'{comm_name}')
+
+    ax2.tick_params(axis='y', labelsize=cfg['axis_size'])
+
+    # Legenda Superior Unificada
+    lines_1, labels_1 = ax1.get_legend_handles_labels()
+    lines_2, labels_2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='lower center',
+               bbox_to_anchor=(0.5, 1.02), ncol=len(lines_1 + lines_2), frameon=True, fontsize=cfg['legend_size'])
+
+    fig.tight_layout(rect=[0, 0, 1, 0.95])
+
+    if output_folder is not None:
+        fig.savefig(os.path.join(output_folder,
+                    labels[lang]['filename']), dpi=600, bbox_inches='tight')
+
+    return fig
